@@ -11,7 +11,7 @@
 
     <!-- CSS -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Playfair+Display:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 
         * {
             margin: 0;
@@ -25,10 +25,38 @@
 
         body {
             margin: 0;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', sans-serif;
             color: #ffffff;
             overflow-x: hidden;
             background: #000205;
+        }
+
+        /* Cursor glow */
+        #cursorGlow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 2;
+            transition: opacity 0.3s ease;
+            will-change: transform;
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(36px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Particle Background */
@@ -55,7 +83,7 @@
             z-index: 1000;
             background: rgba(0, 2, 5, 0.8);
             backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         nav.scrolled {
@@ -63,36 +91,59 @@
             background: rgba(0, 2, 5, 0.95);
         }
 
-        .logo-nav {
-            width: 40px;
-            height: 40px;
-            transition: transform 0.3s ease;
-        }
-
-        .logo-nav:hover {
-            transform: rotate(360deg);
-        }
-
         .nav-links {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            height: 100vh;
+            width: 300px;
+            max-width: 80%;
+            background: rgba(0, 2, 5, 0.98);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            gap: 30px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
             list-style: none;
+            z-index: 1001;
+            transition: right 0.35s ease;
+        }
+
+        .nav-links.active {
+            right: 0;
+        }
+
+        .nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 2, 5, 0.6);
+            backdrop-filter: blur(2px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            z-index: 999;
+        }
+
+        .nav-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .nav-links a {
             color: white;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 20px;
             font-weight: 400;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
+            letter-spacing: 2px;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
         }
 
         .nav-links a::after {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: -8px;
             left: 0;
             width: 0;
             height: 2px;
@@ -104,6 +155,111 @@
             width: 100%;
         }
 
+        .nav-desktop-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-desktop-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-desktop-links a:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 1150px) {
+            .nav-desktop-links {
+                display: none;
+            }
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            height: 40px;
+            padding: 0 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.03);
+            color: white;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .nav-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .nav-icon:hover {
+            background: white;
+            color: #000205;
+            border-color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.25);
+        }
+
+        .nav-icon:hover svg {
+            transform: scale(1.1);
+        }
+
+        .nav-resume-btn {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            height: 40px;
+            padding: 0 26px;
+            background: white;
+            color: #000205;
+            border: 1px solid white;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .nav-resume-btn svg {
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
+        }
+
+        .nav-resume-btn:hover {
+            background: transparent;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+        }
+
         /* Sections */
         section {
             position: relative;
@@ -113,6 +269,7 @@
             justify-content: center;
             padding: 100px 50px;
             z-index: 10;
+            scroll-margin-top: 90px;
         }
 
         .container {
@@ -156,7 +313,7 @@
         }
 
         h1 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 48px;
             font-weight: 700;
             margin-bottom: 10px;
@@ -180,7 +337,7 @@
             text-decoration: none;
             font-size: 14px;
             letter-spacing: 2px;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             margin-top: 20px;
         }
 
@@ -228,7 +385,7 @@
 
         /* About Section */
         #about {
-            background: rgba(10, 15, 20, 0.6);
+            background: rgba(0, 2, 5, 0.8);
         }
 
         .about-content {
@@ -239,7 +396,7 @@
         }
 
         .about-text h2 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 42px;
             margin-bottom: 30px;
             position: relative;
@@ -275,12 +432,12 @@
             padding: 20px;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .skill-item:hover {
             background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-5px);
+            transform: translateY(-6px) scale(1.02);
         }
 
         .skill-item h3 {
@@ -294,13 +451,80 @@
             margin: 0;
         }
 
+        /* Skills Section */
+        .skills-category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px 60px;
+        }
+
+        .skills-category h4 {
+            font-size: 14px;
+            letter-spacing: 2px;
+            font-weight: 400;
+            opacity: 0.6;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Profiles Section */
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .profile-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            text-align: center;
+            padding: 35px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .profile-card svg {
+            width: 32px;
+            height: 32px;
+            fill: currentColor;
+            opacity: 0.85;
+        }
+
+        .profile-card h3 {
+            font-size: 18px;
+        }
+
+        .profile-card p {
+            font-size: 13px;
+            opacity: 0.6;
+            margin: 0;
+        }
+
+        .profile-card:hover {
+            background: white;
+            color: #000205;
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .profile-card:hover p {
+            opacity: 0.7;
+        }
+
         /* Projects Section */
         #projects {
             background: rgba(0, 2, 5, 0.8);
         }
 
         .section-title {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 42px;
             text-align: center;
             margin-bottom: 60px;
@@ -324,17 +548,40 @@
             gap: 40px;
         }
 
+        .project-card-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 260px;
+            background: transparent;
+            border: 1.5px dashed rgba(255, 255, 255, 0.18);
+        }
+
+        .project-content-placeholder {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .project-content-placeholder h3 {
+            opacity: 0.5;
+        }
+
+        .project-content-placeholder p {
+            opacity: 0.35;
+            margin: 0;
+        }
+
         .project-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
         }
 
         .project-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-10px) scale(1.015);
             border-color: rgba(255, 255, 255, 0.3);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
@@ -350,12 +597,27 @@
             color: white;
         }
 
+        img.project-image {
+            font-size: 13px;
+            overflow: hidden;
+        }
+
         .project-card:nth-child(2) .project-image {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
 
         .project-card:nth-child(3) .project-image {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .project-card:nth-child(4) .project-image {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        a.project-card:hover {
+            transform: translateY(-10px) scale(1.015);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         .project-content {
@@ -449,6 +711,33 @@
             opacity: 0.8;
         }
 
+        .timeline-item h3 {
+            transition: opacity 0.3s ease;
+        }
+
+        .timeline-desc {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, margin-top 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 0;
+        }
+
+        .timeline-desc p {
+            padding-top: 2px;
+        }
+
+        .timeline-item:hover .timeline-desc,
+        .timeline-item:focus-within .timeline-desc {
+            max-height: 300px;
+            opacity: 1;
+            margin-top: 12px;
+        }
+
+        .timeline-item {
+            cursor: pointer;
+        }
+
         /* Contact Section */
         #contact {
             background: rgba(0, 2, 5, 0.9);
@@ -462,7 +751,7 @@
         }
 
         .contact-info h2 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 42px;
             margin-bottom: 30px;
         }
@@ -487,11 +776,15 @@
             font-size: 16px;
             color: white;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             padding: 15px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-link span:first-child {
+            filter: grayscale(1);
         }
 
         .contact-link:hover {
@@ -525,9 +818,9 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 6px;
             color: white;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 14px;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .form-group input:focus,
@@ -553,7 +846,7 @@
             letter-spacing: 2px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .submit-button:hover {
@@ -562,52 +855,61 @@
             box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
         }
 
-        /* Footer */
-        footer {
-            background: rgba(0, 2, 5, 0.95);
-            padding: 30px 50px;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 20px;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 24px;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            transform: translateY(-5px);
-            opacity: 0.7;
-        }
-
-        footer p {
-            font-size: 14px;
-            opacity: 0.7;
-        }
-
-        /* Mobile Menu */
+        /* Menu Toggle */
         .mobile-menu-toggle {
-            display: none;
+            display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
             gap: 5px;
+            width: 44px;
+            height: 44px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
             cursor: pointer;
-            z-index: 1001;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1002;
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: white;
+            border-color: white;
         }
 
         .mobile-menu-toggle span {
-            width: 25px;
+            width: 18px;
             height: 2px;
             background: white;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-menu-toggle:hover span {
+            background: #000205;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+        }
+
+        /* On wide screens the inline nav links replace the hamburger menu,
+           and the social icons are dropped since they're already in Profiles */
+        @media (min-width: 1151px) {
+            .mobile-menu-toggle {
+                display: none;
+            }
+
+            .nav-actions .nav-icon {
+                display: none;
+            }
         }
 
         /* Responsive Design */
@@ -617,37 +919,24 @@
             }
 
             .nav-links {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                height: 100vh;
-                width: 70%;
-                background: rgba(0, 2, 5, 0.98);
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                transition: right 0.3s ease;
-                gap: 40px;
+                width: 80%;
             }
 
-            .nav-links.active {
-                right: 0;
+            .nav-actions {
+                gap: 8px;
             }
 
-            .mobile-menu-toggle {
-                display: flex;
+            .nav-actions .nav-icon {
+                display: none;
             }
 
-            .mobile-menu-toggle.active span:nth-child(1) {
-                transform: rotate(45deg) translate(7px, 7px);
+            .nav-resume-btn {
+                padding: 7px 14px;
+                font-size: 11px;
             }
 
-            .mobile-menu-toggle.active span:nth-child(2) {
-                opacity: 0;
-            }
-
-            .mobile-menu-toggle.active span:nth-child(3) {
-                transform: rotate(-45deg) translate(7px, -7px);
+            .nav-resume-btn span {
+                display: none;
             }
 
             h1 {
@@ -664,7 +953,8 @@
                 gap: 40px;
             }
 
-            .skills-grid {
+            .skills-grid,
+            .skills-category-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -730,32 +1020,64 @@
 
     <!-- Particle Background -->
     <div id="magic"></div>
+    <div id="cursorGlow"></div>
 
     <!-- Navigation -->
     <nav id="navbar">
-        <svg class="logo-nav" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 278.8 278.8">
-            <circle fill="#000205" cx="139.4" cy="139.4" r="139.4" />
-            <g fill="none" stroke="#FFF" stroke-width="6.062" stroke-miterlimit="10">
-                <path d="M214 183.4l-74.6 43.1-75.5-43.6V95.8l75.5-43.5 75.4 43.5v59.8l-11.3 6.5z" />
-                <path d="M139.4 226.5l-18.8-38.2 18.8 10.8 75.4-43.5M63.9 95.8l75.3 43.6 75.6-43.6M139.2 139.4v59.7" />
-            </g>
-        </svg>
+        <ul class="nav-desktop-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#achievements">Achievements</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#profiles">Profiles</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="resume.pdf" target="_blank" class="nav-resume-btn">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                <span>RESUME</span>
+            </a>
+            <a href="https://github.com/DavidGeorgeAnuj" target="_blank" class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.61-3.37-1.21-3.37-1.21-.46-1.16-1.11-1.47-1.11-1.47-.91-.63.07-.62.07-.62 1 .07 1.53 1.04 1.53 1.04.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.25-4.56-1.13-4.56-5.02 0-1.11.39-2.02 1.03-2.73-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.04a9.4 9.4 0 0 1 2.5-.34c.85 0 1.7.11 2.5.34 1.91-1.31 2.75-1.04 2.75-1.04.55 1.41.2 2.45.1 2.71.64.71 1.03 1.62 1.03 2.73 0 3.9-2.34 4.77-4.57 5.02.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+                <span>GitHub</span>
+            </a>
+            <a href="https://www.linkedin.com/in/david-george-anuj/" target="_blank" class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.56v-5.58c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.94v5.68H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+                <span>LinkedIn</span>
+            </a>
+            <a href="https://leetcode.com/DavidGeorgeAnuj" target="_blank" class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M13.48 2.32a1.5 1.5 0 0 0-2.12 0L4.3 9.38a3.5 3.5 0 0 0 0 4.95l5.2 5.2a3.5 3.5 0 0 0 4.95 0l1.68-1.68a1.5 1.5 0 1 0-2.12-2.12l-1.68 1.68a.5.5 0 0 1-.71 0l-5.2-5.2a.5.5 0 0 1 0-.7l7.06-7.07a1.5 1.5 0 0 0 0-2.12zM9.5 12.5a1.5 1.5 0 0 0 1.5 1.5h8a1.5 1.5 0 0 0 0-3h-8a1.5 1.5 0 0 0-1.5 1.5z"/></svg>
+                <span>LeetCode</span>
+            </a>
+            <a href="mailto:davidgeorgeanuj@gmail.com" class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                <span>Email</span>
+            </a>
+        </div>
 
         <div class="mobile-menu-toggle" id="mobileMenuToggle">
             <span></span>
             <span></span>
             <span></span>
         </div>
-
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#home">HOME</a></li>
-            <li><a href="#about">ABOUT</a></li>
-            <li><a href="#projects">RESEARCH</a></li>
-            <li><a href="#experience">EXPERIENCE</a></li>
-            <li><a href="#achievements">ACHIEVEMENTS</a></li>
-            <li><a href="#contact">CONTACT</a></li>
-        </ul>
     </nav>
+
+    <!-- Slide-out navigation panel -->
+    <div class="nav-overlay" id="navOverlay"></div>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#home">HOME</a></li>
+        <li><a href="#about">ABOUT</a></li>
+        <li><a href="#experience">EXPERIENCE</a></li>
+        <li><a href="#projects">PROJECTS</a></li>
+        <li><a href="#achievements">ACHIEVEMENTS</a></li>
+        <li><a href="#skills">SKILLS</a></li>
+        <li><a href="#profiles">PROFILES</a></li>
+        <li><a href="#contact">CONTACT</a></li>
+    </ul>
+
 
     <!-- Hero Section -->
     <section id="home">
@@ -768,94 +1090,173 @@
                         d="M139.4 226.5l-18.8-38.2 18.8 10.8 75.4-43.5M63.9 95.8l75.3 43.6 75.6-43.6M139.2 139.4v59.7" />
                 </g>
             </svg>
-            <p class="subtitle">Software Developer</p>
+            <p class="subtitle">Software Intern @ adesso India</p>
             <h1>Turning ideas into code.</h1>
             <!--<a href="#projects" class="cta-button">VIEW MY RESEARCH</a>-->
         </div>
         <div class="scroll-indicator"></div>
     </section>
 
-    <!-- About Section 
-  <section id="about">
-    <div class="container">
-      <div class="about-content">
-        <div class="about-text">
-          <h2>About Me</h2>
-          <p>I'm an AI and systems-focused Computer Science undergraduate at Rajagiri School of Engineering and Technology, Kochi, with a strong passion for bridging the gap between cutting-edge research and real-world applications. Currently pursuing BTech in Computer Science Engineering with Honours in Machine Learning (CGPA: 9.03).</p>
-          <p>My research experience spans three prestigious institutions — IIT Goa, NIT Surathkal, and IIIT Kottayam — where I've worked on real-time systems, assistive robotics, privacy-preserving NLP, and machine learning. I specialize in developing systems that make a tangible impact, from exoskeleton platforms for gait rehabilitation to privacy-preserving AI engines.</p>
-          <p>Beyond academics, I'm actively involved in competitive programming, hackathons, and building sustainable technology solutions. I believe in the power of technology to solve real-world problems and improve lives.</p>
+    <!-- About Section -->
+    <section id="about">
+        <div class="container reveal">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About Me</h2>
+                    <p>CS undergraduate at Rajagiri School of Engineering and Technology (Honours in Machine Learning, CGPA 8.95), working across enterprise software, applied ML, and real-time embedded systems.</p>
+                    <p>Currently a Software Intern at adesso India on a live Mercedes-Benz engagement, with prior research at IIT Goa, NIT Surathkal, and IIIT Kottayam spanning assistive robotics and privacy-preserving NLP.</p>
+                </div>
+                <div class="skills-grid">
+                    <div class="skill-item">
+                        <h3>Enterprise Software</h3>
+                        <p>SAP BTP & Cloud Foundry for a live Mercedes-Benz client engagement.</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3>Assistive Robotics</h3>
+                        <p>Real-time servo control and EMG-driven gait rehabilitation.</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3>Privacy-Preserving NLP</h3>
+                        <p>FastText classifier and T5-small model for edge inference.</p>
+                    </div>
+                    <div class="skill-item">
+                        <h3>Computer Vision</h3>
+                        <p>Hackathon-winning assistive vision system.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="skills-grid">
-          <div class="skill-item">
-            <h3>Programming Languages</h3>
-            <p>Python, Java, C, JavaScript, HTML, CSS, SQL</p>
-          </div>
-          <div class="skill-item">
-            <h3>Machine Learning & CV</h3>
-            <p>PyTorch, TensorFlow, Scikit-learn, OpenCV, EasyOCR, NumPy, FastText, ONNX</p>
-          </div>
-          <div class="skill-item">
-            <h3>Systems & Embedded</h3>
-            <p>Raspberry Pi, Linux, Real-Time Systems, Sensor Fusion, EMG Signal Processing</p>
-          </div>
-          <div class="skill-item">
-            <h3>Tools & Frameworks</h3>
-            <p>Git, MySQL, Flask, Flutter, Docker, Edge Deployment</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section> -->
+    </section>
     <!-- Experience Section -->
     <section id="experience">
-        <div class="container">
+        <div class="container reveal">
             <h2 class="section-title">Research & Experience</h2>
             <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-date">2025</div>
-                    <h3>Research Author</h3>
-                    <p class="timeline-company">IIIT Kottayam</p>
-                    <p>Co-authored research paper on privacy-preserving AI and secure NLP inference. Developed a
-                        FastText-based sensitivity classifier and T5-small rephrasing model, deployed using ONNX for
-                        edge inference to ensure data privacy in AI applications.</p>
+                <div class="timeline-item" tabindex="0">
+                    <div class="timeline-date">June 2026 – Present</div>
+                    <h3>Software Intern</h3>
+                    <p class="timeline-company">adesso India</p>
+                    <div class="timeline-desc">
+                        <p>Developing and customizing enterprise applications, gaining hands-on technical experience with
+                            SAP Business Technology Platform (SAP BTP), Cloud Foundry deployments, and enterprise service
+                            integrations. Onboarding onto a live client engagement for Mercedes-Benz, gaining direct
+                            exposure to enterprise-scale software delivery processes.</p>
+                    </div>
                 </div>
 
-                <div class="timeline-item">
+                <div class="timeline-item" tabindex="0">
+                    <div class="timeline-date">2025</div>
+                    <h3>Research Intern</h3>
+                    <p class="timeline-company">IIIT Kottayam</p>
+                    <div class="timeline-desc">
+                        <p>Co-authored research paper on privacy-preserving AI and secure NLP inference. Developed a
+                            FastText-based sensitivity classifier and T5-small rephrasing model, deployed using ONNX for
+                            edge inference to ensure data privacy in AI applications.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item" tabindex="0">
                     <div class="timeline-date">2024</div>
-                    <h3>Research Assistant</h3>
+                    <h3>Research & Software Intern</h3>
+                    <p class="timeline-company">IIT Goa & NIT Surathkal</p>
+                    <div class="timeline-desc">
+                        <p>Built a real-time servo motor control system with adaptive feedback at IIT Goa using Flutter
+                            and Flask, integrating Raspberry Pi with sensor-based actuation for assistive robotic
+                            movement. The system was adopted as the base platform for NIT Surathkal's exoskeleton
+                            project, where the full software stack was engineered for gait rehabilitation — including
+                            real-time EMG signal processing and multi-sensor fusion. Retained beyond the initial term at
+                            NIT Surathkal to continue system development based on demonstrated performance.</p>
+                    </div>
+                </div>
+
+                <!--<div class="timeline-item" tabindex="0">
+                    <div class="timeline-date">2024</div>
+                    <h3>Research & Software Intern</h3>
                     <p class="timeline-company">NIT Surathkal</p>
                     <p>Developed the full software stack for a wearable robotic exoskeleton for gait rehabilitation
                         using real-time EMG signal processing and sensor fusion. Offered continuation to further develop
                         and integrate the system based on demonstrated performance and initiative.</p>
                 </div>
 
-                <div class="timeline-item">
+                <div class="timeline-item" tabindex="0">
                     <div class="timeline-date">2024</div>
-                    <h3>Research Intern</h3>
+                    <h3>Research & Software Intern</h3>
                     <p class="timeline-company">IIT Goa</p>
                     <p>Built a real-time servo motor control system with adaptive feedback using Flutter and Flask over
                         Wi-Fi. Integrated Raspberry Pi with sensor-based actuation for assistive robotic movement,
                         forming the base system for NIT Surathkal's exoskeleton platform.</p>
-                </div>
+                </div>-->
 
-                <!--<div class="timeline-item">
+                <!--<div class="timeline-item" tabindex="0">
           <div class="timeline-date">2023 - 2027</div>
           <h3>BTech in Computer Science Engineering (Honours)</h3>
           <p class="timeline-company">Rajagiri School of Engineering and Technology, Kochi</p>
-          <p>CGPA: 9.03 — Honours in Machine Learning. Active member of CSI and technical clubs. Coder of the Month winner and 2nd place in Inter-Collegiate Hackathon at VASTC, Trivandrum.</p>
+          <p>CGPA: 8.95 — Honours in Machine Learning. Active member of CSI and technical clubs. Coder of the Month winner and 2nd place in Inter-Collegiate Hackathon at VASTC, Trivandrum.</p>
         </div>-->
             </div>
         </div>
     </section>
     <!-- Achievements Section -->
+    <!-- Projects Section -->
+    <section id="projects" style="background: rgba(0, 2, 5, 0.8);">
+        <div class="container reveal">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-grid">
+                <a href="https://github.com/DavidGeorgeAnuj/exoskeleton_app" target="_blank" class="project-card" style="display: block; color: inherit; text-decoration: none;">
+                    <img class="project-image" src="https://drive.google.com/thumbnail?id=1ODhflZXjckEmR1JXQ7jyvuZwinxovUbW&sz=w1000" alt="Rehabilitation Exoskeleton Control System" style="width: 100%; height: auto; display: block; object-fit: contain; background: #0a0f14;">
+                    <div class="project-content">
+                        <h3>Rehabilitation Exoskeleton Control System</h3>
+                        <p>Real-time control system for a robotic rehabilitation exoskeleton, built during a research
+                            internship at IIT Goa. A Python asyncio WebSocket server on a Raspberry Pi drives a
+                            T-Motor actuator over CAN bus, with a Flutter mobile app and web dashboard for live
+                            control and telemetry. Features a stateful, server-authoritative RBAC safety framework,
+                            self-hosted operation with no internet required, and live data plots with one-touch CSV
+                            export.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Python (asyncio)</span>
+                            <span class="tech-tag">WebSockets</span>
+                            <span class="tech-tag">Flutter</span>
+                            <span class="tech-tag">Raspberry Pi</span>
+                            <span class="tech-tag">CAN Bus</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="https://github.com/DavidGeorgeAnuj/storage_cluster" target="_blank" class="project-card" style="display: block; color: inherit; text-decoration: none;">
+                    <img class="project-image" src="https://drive.google.com/thumbnail?id=1qUaFSJYHPCX0Pm8C3hZT-0LoQe3l8rri&sz=w1000" alt="PocketCluster" style="width: 100%; height: auto; display: block; object-fit: contain; background: #0a0f14;">
+                    <div class="project-content">
+                        <h3>PocketCluster</h3>
+                        <p>Collaborated on a distributed, zero-trust cloud storage system that repurposes old or
+                            unused mobile phones as encrypted storage nodes. Files are encrypted, chunked, and
+                            replicated across the cluster, with the standout feature being semantic search (RAG)
+                            over encrypted files — natural-language file search using on-device embeddings, without
+                            ever decrypting the underlying data.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">FastAPI</span>
+                            <span class="tech-tag">Kotlin</span>
+                            <span class="tech-tag">ONNX Runtime</span>
+                            <span class="tech-tag">MySQL</span>
+                        </div>
+                    </div>
+                </a>
+
+                <div class="project-card project-card-placeholder">
+                    <div class="project-content project-content-placeholder">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="achievements" style="background: rgba(10, 15, 20, 0.6);">
-        <div class="container">
+        <div class="container reveal">
             <h2 class="section-title">Achievements & Recognition</h2>
             <div class="projects-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
                 <div class="project-card" style="text-align: center;">
 
                     <div class="project-image" style="
-      background-image: url('https://upload.wikimedia.org/wikipedia/en/c/c2/Logo_of_Vidya_Academy_of_Science_and_Technology_02.png');
+      background-image: url('https://drive.google.com/thumbnail?id=1JWI4gu-14NJRNH7uKvFeJcBtbDq87WIH&sz=w1000');
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
@@ -917,7 +1318,7 @@
                     <div class="project-content">
                         <h3>Academic Excellence</h3>
                         <p>
-                            Maintaining CGPA of 9.03 in BTech Computer Science Engineering
+                            Maintaining CGPA of 8.95 in BTech Computer Science Engineering
                             with Honours in Machine Learning at Rajagiri School of Engineering and Technology.
                         </p>
                     </div>
@@ -928,172 +1329,155 @@
             </div>
         </div>
     </section>
-    <!-- Projects Section -->
-   <!-- <section id="projects">
-        <div class="container">
-            <h2 class="section-title">Featured Projects & Research</h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-image">🤖</div>
-                    <div class="project-content">
-                        <h3>Human–Machine Gait Interface (Exoskeleton)</h3>
-                        <p>Developed the complete software stack for a wearable robotic exoskeleton for gait
-                            rehabilitation at NIT Surathkal. Implemented real-time EMG signal processing and sensor
-                            fusion for assistive movement. Offered continuation based on demonstrated performance.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">Real-Time Systems</span>
-                            <span class="tech-tag">EMG Processing</span>
-                            <span class="tech-tag">Sensor Fusion</span>
-                        </div>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <div class="container reveal">
+            <h2 class="section-title">Technical Skills</h2>
+            <div class="skills-category-grid">
+                <div class="skills-category">
+                    <h4>Languages</h4>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Java</span>
+                        <span class="tech-tag">C</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">CSS</span>
                     </div>
                 </div>
-
-                <div class="project-card">
-                    <div class="project-image">🔐</div>
-                    <div class="project-content">
-                        <h3>AI Privacy & Query Sensitivity Engine</h3>
-                        <p>Co-authored research paper on privacy-preserving AI at IIIT Kottayam. Built FastText-based
-                            sensitivity classifier and T5-small rephrasing model for secure NLP inference, deployed
-                            using ONNX for efficient edge inference.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">FastText</span>
-                            <span class="tech-tag">T5-small</span>
-                            <span class="tech-tag">ONNX</span>
-                            <span class="tech-tag">NLP</span>
-                        </div>
+                <div class="skills-category">
+                    <h4>SAP & Enterprise</h4>
+                    <div class="tech-tags">
+                        <span class="tech-tag">SAP BTP</span>
+                        <span class="tech-tag">Cloud Foundry</span>
+                        <span class="tech-tag">Enterprise App Dev</span>
                     </div>
                 </div>
-
-                <div class="project-card">
-                    <div class="project-image">👁️</div>
-                    <div class="project-content">
-                        <h3>Assistive Image Processing System</h3>
-                        <p>Hackathon-winning real-time computer vision application using Python and OpenCV. Features
-                            face recognition, text recognition, and nearby object detection to improve safety and
-                            environmental awareness for visually impaired users.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">OpenCV</span>
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">EasyOCR</span>
-                            <span class="tech-tag">Computer Vision</span>
-                        </div>
+                <div class="skills-category">
+                    <h4>Machine Learning & CV</h4>
+                    <div class="tech-tags">
+                        <span class="tech-tag">PyTorch</span>
+                        <span class="tech-tag">TensorFlow</span>
+                        <span class="tech-tag">Scikit-learn</span>
+                        <span class="tech-tag">OpenCV</span>
+                        <span class="tech-tag">EasyOCR</span>
+                        <span class="tech-tag">NumPy</span>
                     </div>
                 </div>
-
-                <div class="project-card">
-                    <div class="project-image">⚙️</div>
-                    <div class="project-content">
-                        <h3>Servo Motor Control Platform</h3>
-                        <p>Built real-time servo motor control system with adaptive feedback at IIT Goa using Flutter
-                            and Flask. Integrated Raspberry Pi with sensor-based actuation, forming the base system for
-                            NIT Surathkal's exoskeleton platform.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Flutter</span>
-                            <span class="tech-tag">Flask</span>
-                            <span class="tech-tag">Raspberry Pi</span>
-                            <span class="tech-tag">IoT</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-image">💧</div>
-                    <div class="project-content">
-                        <h3>Smart Drip Irrigation System</h3>
-                        <p>Solar-powered smart drip irrigation system using Raspberry Pi 4, presented to 50+ audience.
-                            Demonstrates efficient water usage and real-world sustainable farming impact through
-                            IoT-enabled precision agriculture.</p>
-                        <div class="tech-tags">
-                            <span class="tech-tag">Raspberry Pi</span>
-                            <span class="tech-tag">IoT</span>
-                            <span class="tech-tag">Sensors</span>
-                            <span class="tech-tag">Sustainability</span>
-                        </div>
+                <div class="skills-category">
+                    <h4>Systems & Tools</h4>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Raspberry Pi</span>
+                        <span class="tech-tag">Git</span>
+                        <span class="tech-tag">Linux</span>
+                        <span class="tech-tag">MySQL</span>
                     </div>
                 </div>
             </div>
         </div>
-    </section>-->
+    </section>
 
-
-
+    <!-- Profiles Section -->
+    <section id="profiles" style="background: rgba(0, 2, 5, 0.8);">
+        <div class="container reveal">
+            <h2 class="section-title">Find Me Online</h2>
+            <div class="profiles-grid">
+                <a href="https://github.com/DavidGeorgeAnuj" target="_blank" class="profile-card">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.61-3.37-1.21-3.37-1.21-.46-1.16-1.11-1.47-1.11-1.47-.91-.63.07-.62.07-.62 1 .07 1.53 1.04 1.53 1.04.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.25-4.56-1.13-4.56-5.02 0-1.11.39-2.02 1.03-2.73-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.04a9.4 9.4 0 0 1 2.5-.34c.85 0 1.7.11 2.5.34 1.91-1.31 2.75-1.04 2.75-1.04.55 1.41.2 2.45.1 2.71.64.71 1.03 1.62 1.03 2.73 0 3.9-2.34 4.77-4.57 5.02.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+                    <h3>GitHub</h3>
+                    <p>@DavidGeorgeAnuj</p>
+                </a>
+                <a href="https://www.linkedin.com/in/david-george-anuj/" target="_blank" class="profile-card">
+                    <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.56v-5.58c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.94v5.68H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+                    <h3>LinkedIn</h3>
+                    <p>david-george-anuj</p>
+                </a>
+                <a href="https://leetcode.com/DavidGeorgeAnuj" target="_blank" class="profile-card">
+                    <svg viewBox="0 0 24 24"><path d="M13.48 2.32a1.5 1.5 0 0 0-2.12 0L4.3 9.38a3.5 3.5 0 0 0 0 4.95l5.2 5.2a3.5 3.5 0 0 0 4.95 0l1.68-1.68a1.5 1.5 0 1 0-2.12-2.12l-1.68 1.68a.5.5 0 0 1-.71 0l-5.2-5.2a.5.5 0 0 1 0-.7l7.06-7.07a1.5 1.5 0 0 0 0-2.12zM9.5 12.5a1.5 1.5 0 0 0 1.5 1.5h8a1.5 1.5 0 0 0 0-3h-8a1.5 1.5 0 0 0-1.5 1.5z"/></svg>
+                    <h3>LeetCode</h3>
+                    <p>DavidGeorgeAnuj</p>
+                </a>
+                <a href="mailto:davidgeorgeanuj@gmail.com" class="profile-card">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    <h3>Email</h3>
+                    <p>davidgeorgeanuj@gmail.com</p>
+                </a>
+            </div>
+        </div>
+    </section>
 
     <!-- Contact Section -->
-    <!--<section id="contact">
-        <div class="container">
+    <section id="contact">
+        <div class="container reveal">
             <div class="contact-content">
                 <div class="contact-info">
                     <h2>Let's Connect</h2>
-                    <p>I'm always interested in research collaborations, innovative projects, and opportunities in AI,
-                        machine learning, and real-time systems. Whether you want to discuss research ideas or just
-                        connect, feel free to reach out!</p>
+                    <p>I'm always interested in research collaborations, SAP and enterprise engineering opportunities,
+                        and projects in AI, machine learning, and real-time systems. Feel free to reach out.</p>
                     <div class="contact-links">
                         <a href="mailto:davidgeorgeanuj@gmail.com" class="contact-link">
                             <span>📧</span>
                             <span>davidgeorgeanuj@gmail.com</span>
                         </a>
-
-                        <a href="https://www.linkedin.com/in/davidgeorgeanuj" target="_blank" class="contact-link">
+                        <a href="tel:+919074523837" class="contact-link">
+                            <span>📱</span>
+                            <span>+91 9074523837</span>
+                        </a>
+                        <a href="https://www.linkedin.com/in/david-george-anuj/" target="_blank" class="contact-link">
                             <span>💼</span>
-                            <span>linkedin.com/in/davidgeorgeanuj</span>
+                            <span>linkedin.com/in/david-george-anuj</span>
                         </a>
-                        <a href="https://github.com/davidgeorgeanuj" target="_blank" class="contact-link">
+                        <a href="https://github.com/DavidGeorgeAnuj" target="_blank" class="contact-link">
                             <span>💻</span>
-                            <span>github.com/davidgeorgeanuj</span>
+                            <span>github.com/DavidGeorgeAnuj</span>
                         </a>
-                        <a href="https://leetcode.com/davidgeorgeanuj" target="_blank" class="contact-link">
-                            <span>🏆</span>
-                            <span>leetcode.com/davidgeorgeanuj</span>
-                        
                     </div>
                 </div>
 
                 <form class="contact-form" id="contactForm">
                     <div class="form-group">
                         <label for="name">NAME</label>
-                        <input type="text" id="name" name="name" required>
+                        <input type="text" id="name" name="name" autocomplete="name" required>
                     </div>
                     <div class="form-group">
                         <label for="email">EMAIL</label>
-                        <input type="email" id="email" name="email" required>
+                        <input type="email" id="email" name="email" autocomplete="email" required>
                     </div>
                     <div class="form-group">
                         <label for="message">MESSAGE</label>
-                        <textarea id="message" name="message" required></textarea>
+                        <textarea id="message" name="message" autocomplete="off" required></textarea>
                     </div>
                     <button type="submit" class="submit-button">SEND MESSAGE</button>
                 </form>
             </div>
         </div>
-    </section>-->
+    </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="social-links">
-            <a href="https://github.com/davidgeorgeanuj" target="_blank">GitHub</a>
-            <a href="https://www.linkedin.com/in/davidgeorgeanuj" target="_blank">LinkedIn</a>
-            <a href="https://leetcode.com/davidgeorgeanuj" target="_blank">LeetCode</a>
-            <a href="mailto:davidgeorgeanuj@gmail.com">Email</a>
-        </div>
-        <p>&copy; 2025 David George Anuj. Kochi, India</p>
-    </footer>
 
     <!-- JavaScript -->
     <script>
         // Three.js Particle System
         const preload = () => {
-            let manager = new THREE.LoadingManager();
-            manager.onLoad = function () {
-                const environment = new Environment(typo, particle);
-            }
+            try {
+                let manager = new THREE.LoadingManager();
+                manager.onLoad = function () {
+                    try {
+                        const environment = new Environment(typo, particle);
+                    } catch (err) {
+                        console.error('Particle background failed to initialize:', err);
+                    }
+                }
 
-            var typo = null;
-            const loader = new THREE.FontLoader(manager);
-            const font = loader.load('https://res.cloudinary.com/dydre7amr/raw/upload/v1612950355/font_zsd4dr.json', function (font) {
-                typo = font;
-            });
-            const particle = new THREE.TextureLoader(manager).load('https://res.cloudinary.com/dfvtkoboz/image/upload/v1605013866/particle_a64uzf.png');
+                var typo = null;
+                const loader = new THREE.FontLoader(manager);
+                const font = loader.load('https://res.cloudinary.com/dydre7amr/raw/upload/v1612950355/font_zsd4dr.json', function (font) {
+                    typo = font;
+                });
+                const particle = new THREE.TextureLoader(manager).load('https://res.cloudinary.com/dfvtkoboz/image/upload/v1605013866/particle_a64uzf.png');
+            } catch (err) {
+                console.error('Particle background failed to load:', err);
+            }
         }
 
         if (document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll))
@@ -1413,64 +1797,79 @@
             }
         }
 
+    </script>
+
+    <script>
         // Navigation functionality
         const navbar = document.getElementById('navbar');
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const navLinks = document.getElementById('navLinks');
+        const navOverlay = document.getElementById('navOverlay');
         const navLinkItems = document.querySelectorAll('.nav-links a');
 
-        // Navbar scroll effect
+        // Navbar background on scroll
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) {
+            if (window.scrollY > 60) {
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
             }
         });
 
-        // Mobile menu toggle
+        // Menu toggle
+        function closeNav() {
+            mobileMenuToggle.classList.remove('active');
+            navLinks.classList.remove('active');
+            navOverlay.classList.remove('active');
+        }
+
         mobileMenuToggle.addEventListener('click', () => {
             mobileMenuToggle.classList.toggle('active');
             navLinks.classList.toggle('active');
+            navOverlay.classList.toggle('active');
         });
 
-        // Close mobile menu when clicking on a link
+        navOverlay.addEventListener('click', closeNav);
+
+        // Close mobile nav after clicking a link (native anchor jump still happens)
         navLinkItems.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenuToggle.classList.remove('active');
-                navLinks.classList.remove('active');
-            });
+            link.addEventListener('click', closeNav);
         });
 
         // Form submission
         const contactForm = document.getElementById('contactForm');
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(contactForm);
-            const data = Object.fromEntries(formData);
-
-            // Here you would typically send the data to a server
-            console.log('Form submitted:', data);
-
-            // Show success message
-            alert('Thank you for your message! I will get back to you soon.');
-            contactForm.reset();
-        });
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+        if (contactForm) {
+            contactForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                const formData = new FormData(contactForm);
+                const data = Object.fromEntries(formData);
+                console.log('Form submitted:', data);
+                alert('Thank you for your message! I will get back to you soon.');
+                contactForm.reset();
+            });
+        }
+
+        // Cursor glow follow (desktop only)
+        const cursorGlow = document.getElementById('cursorGlow');
+        if (window.matchMedia('(pointer: fine)').matches) {
+            window.addEventListener('mousemove', (e) => {
+                cursorGlow.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+            });
+        } else if (cursorGlow) {
+            cursorGlow.style.display = 'none';
+        }
+
+        // Scroll-reveal animation for section content
+        const revealEls = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
                 }
             });
-        });
+        }, { threshold: 0.15 });
+        revealEls.forEach(el => revealObserver.observe(el));
     </script>
 
 </body>
